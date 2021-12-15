@@ -1,3 +1,5 @@
+# Run me on your main computer, it will configure your laptop to be a development machine so you can host SQL Server and IIS locally and debug and run the app
+
 $randomQuotesUser = 'svcRandomQuotes_Local'
 $randomQuotesPassword = 'Password01!'
 $randomQuotesDatabase = 'RandomQuotes_Local'
