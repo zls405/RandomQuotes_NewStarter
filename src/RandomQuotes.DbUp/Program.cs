@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
 using DbUp;
 using DbUp.Helpers;
 
@@ -11,6 +13,7 @@ namespace RandomQuotes.DbUp
     {
         static int Main(string[] args)
         {
+            var retryCount = 0;
             var connectionString = args.First(x => x.StartsWith("--ConnectionString", StringComparison.OrdinalIgnoreCase));
 
             connectionString = connectionString.Substring(connectionString.IndexOf("=", StringComparison.InvariantCultureIgnoreCase) + 1).Replace(@"""", string.Empty);
