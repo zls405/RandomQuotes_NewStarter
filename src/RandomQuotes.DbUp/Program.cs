@@ -15,15 +15,38 @@ namespace RandomQuotes.DbUp
 
             connectionString = connectionString.Substring(connectionString.IndexOf("=", StringComparison.InvariantCultureIgnoreCase) + 1).Replace(@"""", string.Empty);
 
+            // retry three times
+            while (true)
+            {
+                try
+                {
+                    EnsureDatabase.For.SqlDatabase(connectionString);
+                    break;
+                }
+                catch (SqlException)
+                {
+                    if (retryCount < 3)
+                    {
+                        Console.WriteLine("Connection error occured, waiting 3 seconds then trying again.");
+                        Thread.Sleep(3000);
+                        retryCount += 1;
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+            }
+
             var upgrader =
                 DeployChanges.To
                     .SqlDatabase(connectionString)
                     .WithScriptsEmbeddedInAssembly(Assembly.GetExecutingAssembly())
                     .LogToConsole()
                     .Build();
-            
+
             Console.WriteLine($"Is upgrade required: {upgrader.IsUpgradeRequired()}");
-            
+
             if (args.Any(a => a.StartsWith("--PreviewReportPath", StringComparison.InvariantCultureIgnoreCase)))
             {
                 var report = args.First(x => x.StartsWith("--PreviewReportPath", StringComparison.OrdinalIgnoreCase));
