@@ -1,7 +1,9 @@
 ﻿using System;
-using Microsoft.AspNetCore;
-using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using RandomQuotes.Data;
 
@@ -11,9 +13,26 @@ namespace RandomQuotes
     {
         public static void Main(string[] args)
         {
-            var host = BuildWebHost(args);
+            var builder = WebApplication.CreateBuilder(args);
+            builder.Host.ConfigureAppConfiguration((hostingContext, config) =>
+            {
+                var env = hostingContext.HostingEnvironment;
+                config.SetBasePath(env.ContentRootPath)
+               .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+               .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
+               .AddEnvironmentVariables();
+            });
 
-            using (var scope = host.Services.CreateScope())
+            // Register Services
+            builder.Services.Configure<AppSettings>(builder.Configuration);
+            var dbSettings = builder.Configuration.Get<AppSettings>();
+            builder.Services.AddDbContext<QuoteContext>(options => options.UseSqlServer(dbSettings.DefaultConnection));
+
+            builder.Services.AddControllersWithViews();
+
+            var app = builder.Build();
+
+            using (var scope = app.Services.CreateScope())
             {
                 var services = scope.ServiceProvider;
                 try
@@ -27,13 +46,25 @@ namespace RandomQuotes
                     logger.LogError(ex, "An error occurred while seeding the database.");
                 }
             }
+            if (!app.Environment.IsDevelopment())
+            {
+                app.UseExceptionHandler("/Home/Error");
+            }
+            else
+            {
+                //app.UseDeveloperExceptionPage();
+            }
 
-            host.Run();
+            app.UseStaticFiles();
+            app.UseRouting();
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllerRoute(
+                    name: "default",
+                    pattern: "{controller=Home}/{action=Index}/{id?}");
+            });
+
+            app.Run();
         }
-
-        public static IWebHost BuildWebHost(string[] args) =>
-            WebHost.CreateDefaultBuilder(args)
-                .UseStartup<Startup>()
-                .Build();
     }
 }

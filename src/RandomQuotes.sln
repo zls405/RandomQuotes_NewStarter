@@ -5,7 +5,7 @@ VisualStudioVersion = 16.0.31005.135
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RandomQuotes", "RandomQuotes\RandomQuotes.csproj", "{A42CA059-49B7-4D4E-9F86-1A289869066B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RandomQuotes.DbUp", "RandomQuotes.DbUp\RandomQuotes.DbUp.csproj", "{3D255823-32E3-49B9-8AA0-25B67BDAF3AC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RandomQuotes.DbUp", "RandomQuotes.DbUp\RandomQuotes.DbUp.csproj", "{3D255823-32E3-49B9-8AA0-25B67BDAF3AC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
