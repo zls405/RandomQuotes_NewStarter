@@ -10,7 +10,7 @@ After forking this repo, run the script `get-started.ps1` as an admin.  That scr
 The setup script assumes the following when setting this up for local runs.
 
 1. You want to have chocolatey installed.
-1. You want IIS and .NET 5 installed.
+1. You want IIS and .NET 6 installed.
 1. You want SQL Server Express installed.
 1. You are running SQL Server Express with the instance name `(local)\SQLExpress`.
 1. You have a database named `RandomQuotes_Local`.
