@@ -16,8 +16,8 @@ Dism /Online /Enable-Feature /FeatureName:IIS-CustomLogging /All
 Dism /Online /Enable-Feature /FeatureName:IIS-ManagementService /All
 Dism /Online /Enable-Feature /FeatureName:IIS-WindowsAuthentication /All
 
-choco install dotnet-5.0-sdk -y
-choco install dotnet-5.0-runtime -y
+choco install dotnet-6.0-sdk -y
+choco install dotnet-6.0-runtime -y
 
 choco install sql-server-express -y
 
