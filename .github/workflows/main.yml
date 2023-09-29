@@ -17,7 +17,7 @@ jobs:
       run: |
         $packageVersion = Get-Date -Format "yyyy.MM.dd"
         $packageVersion += "." + $env:GITHUB_RUN_NUMBER
-        echo "PACKAGE_VERSION=$packageVersion" >> $GITHUB_ENV
+        echo "PACKAGE_VERSION=$packageVersion" >> $env:GITHUB_ENV
         echo "PACKAGE_VERSION=$packageVersion" # This is just for debugging
         echo "PACKAGE_VERSION: ${{ env.PACKAGE_VERSION }}"
 
