@@ -1,0 +1,65 @@
+name: RandomQuotes Build
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set Version
+      run: echo "PACKAGE_VERSION=$(date +'%Y.%m.%d').$GITHUB_RUN_NUMBER" >> $GITHUB_ENV
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 6.0.x
+    - name: Install dependencies
+      run: dotnet restore
+    - name: Build
+      run: dotnet build --configuration Release --no-restore
+    - name: Create artifacts folder
+      run: |
+        mkdir "$GITHUB_WORKSPACE/artifacts"
+        mkdir "$GITHUB_WORKSPACE/artifacts/RandomQuotes.db"
+        mkdir "$GITHUB_WORKSPACE/artifacts/RandomQuotes.ui"
+    - name: Publish RandomQuotesDatabase
+      run: dotnet publish RandomQuotes.DbUp/RandomQuotes.DbUp.csproj --configuration Release --no-restore --output "$GITHUB_WORKSPACE/artifacts/RandomQuotes.db"
+    - name: Publish RandomQuotesUI
+      run: dotnet publish RandomQuotes/RandomQuotes.csproj --configuration Release --no-restore --output "$GITHUB_WORKSPACE/artifacts/RandomQuotes.ui"
+    
+    - name: Install Octopus CLI
+      uses: OctopusDeploy/install-octopus-cli-action@v1
+
+      with:
+        version: latest
+    
+    - name: Package RandomQuotesDatabase
+      run: |
+        octo pack --id="RandomQuotes.db" --format="Zip" --version="$PACKAGE_VERSION" --basePath="$GITHUB_WORKSPACE/artifacts/RandomQuotes.db" --outFolder="$GITHUB_WORKSPACE/artifacts"
+    - name: Package RandomQuotesUI
+      run: |
+        octo pack --id="RandomQuotes.ui" --format="Zip" --version="$PACKAGE_VERSION" --basePath="$GITHUB_WORKSPACE/artifacts/RandomQuotes.ui" --outFolder="$GITHUB_WORKSPACE/artifacts"
+    
+    - name: Push RandomQuotes packages
+      uses: OctopusDeploy/push-package-action@v1
+      with:
+        api_key: ${{ secrets.OCTOPUSSERVERAPIKEY }}
+        server: ${{ secrets.OCTOPUSSERVERURL }}
+        packages: "artifacts/RandomQuotes.db.${{ env.PACKAGE_VERSION }}.zip,artifacts/RandomQuotes.ui.${{ env.PACKAGE_VERSION }}.zip,artifacts"
+        space: ${{ secrets.OCTOPUSSERVER_SPACE }}
+        
+    # - name: Create and deploy release
+    #   uses: OctopusDeploy/create-release-action@v1
+    #   with:
+    #     api_key: ${{ secrets.OCTOPUSSERVERAPIKEY }}
+    #     server: ${{ secrets.OCTOPUSSERVERURL }}
+    #     space: ${{ secrets.OCTOPUSSERVER_SPACE }}
+    #     project: "Random Quotes Demo"
+    #     deploy_to: "Development"
+    #     progress: true
