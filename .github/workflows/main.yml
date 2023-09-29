@@ -34,23 +34,23 @@ jobs:
     - name: Create artifacts folder
       run: |
         # Check if the "artifacts" directory exists, and create it if it doesn't.
-        if (!(Test-Path "$GITHUB_WORKSPACE/artifacts")) {
-            mkdir "$GITHUB_WORKSPACE/artifacts"
+        if (!(Test-Path "$env:GITHUB_WORKSPACE/artifacts")) {
+            mkdir "$env:GITHUB_WORKSPACE/artifacts"
         }
         
         # Check if the "RandomQuotes.db" directory exists, and create it if it doesn't.
-        if (!(Test-Path "$GITHUB_WORKSPACE/artifacts/RandomQuotes.db")) {
-            mkdir "$GITHUB_WORKSPACE/artifacts/RandomQuotes.db"
+        if (!(Test-Path "$env:GITHUB_WORKSPACE/artifacts/RandomQuotes.db")) {
+            mkdir "$env:GITHUB_WORKSPACE/artifacts/RandomQuotes.db"
         }
         
         # Check if the "RandomQuotes.ui" directory exists, and create it if it doesn't.
-        if (!(Test-Path "$GITHUB_WORKSPACE/artifacts/RandomQuotes.ui")) {
-            mkdir "$GITHUB_WORKSPACE/artifacts/RandomQuotes.ui"
+        if (!(Test-Path "$env:GITHUB_WORKSPACE/artifacts/RandomQuotes.ui")) {
+            mkdir "$env:GITHUB_WORKSPACE/artifacts/RandomQuotes.ui"
         }
     - name: Publish RandomQuotesDatabase
-      run: dotnet publish ./src/RandomQuotes.DbUp/RandomQuotes.DbUp.csproj --configuration Release --no-restore --output "$GITHUB_WORKSPACE/artifacts/RandomQuotes.db"
+      run: dotnet publish ./src/RandomQuotes.DbUp/RandomQuotes.DbUp.csproj --configuration Release --no-restore --output "$env:GITHUB_WORKSPACE/artifacts/RandomQuotes.db"
     - name: Publish RandomQuotesUI
-      run: dotnet publish ./src/RandomQuotes/RandomQuotes.csproj --configuration Release --no-restore --output "$GITHUB_WORKSPACE/artifacts/RandomQuotes.ui"
+      run: dotnet publish ./src/RandomQuotes/RandomQuotes.csproj --configuration Release --no-restore --output "$env:GITHUB_WORKSPACE/artifacts/RandomQuotes.ui"
     
     - name: Install Octopus CLI
       uses: OctopusDeploy/install-octopus-cli-action@v1
@@ -60,10 +60,10 @@ jobs:
     
     - name: Package RandomQuotesDatabase
       run: |
-        octo pack --id="RandomQuotes.db" --format="Zip" --version="$PACKAGE_VERSION" --basePath="$GITHUB_WORKSPACE/artifacts/RandomQuotes.db" --outFolder="$GITHUB_WORKSPACE/artifacts"
+        octo pack --id="RandomQuotes.db" --format="Zip" --version="$PACKAGE_VERSION" --basePath="$env:GITHUB_WORKSPACE/artifacts/RandomQuotes.db" --outFolder="$env:GITHUB_WORKSPACE/artifacts"
     - name: Package RandomQuotesUI
       run: |
-        octo pack --id="RandomQuotes.ui" --format="Zip" --version="$PACKAGE_VERSION" --basePath="$GITHUB_WORKSPACE/artifacts/RandomQuotes.ui" --outFolder="$GITHUB_WORKSPACE/artifacts"
+        octo pack --id="RandomQuotes.ui" --format="Zip" --version="$PACKAGE_VERSION" --basePath="$env:GITHUB_WORKSPACE/artifacts/RandomQuotes.ui" --outFolder="$env:GITHUB_WORKSPACE/artifacts"
     
     - name: Push RandomQuotes packages
       uses: OctopusDeploy/push-package-action@v1
