@@ -14,7 +14,10 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Set Version
-      run: echo "PACKAGE_VERSION=$(date -UFormat "%Y.%m.%d").$GITHUB_RUN_NUMBER" >> $GITHUB_ENV
+      run: |
+        $packageVersion = Get-Date -Format "yyyy.MM.dd"
+        $packageVersion += "." + $env:GITHUB_RUN_NUMBER
+        Write-Host "PACKAGE_VERSION=$packageVersion" >> $GITHUB_ENV
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
       with:
