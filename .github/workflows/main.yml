@@ -27,9 +27,20 @@ jobs:
       run: dotnet build --configuration Release --no-restore
     - name: Create artifacts folder
       run: |
-        mkdir "$GITHUB_WORKSPACE/artifacts"
-        mkdir "$GITHUB_WORKSPACE/artifacts/RandomQuotes.db"
-        mkdir "$GITHUB_WORKSPACE/artifacts/RandomQuotes.ui"
+        # Check if the "artifacts" directory exists, and create it if it doesn't.
+        if (!(Test-Path "$GITHUB_WORKSPACE/artifacts")) {
+            mkdir "$GITHUB_WORKSPACE/artifacts"
+        }
+        
+        # Check if the "RandomQuotes.db" directory exists, and create it if it doesn't.
+        if (!(Test-Path "$GITHUB_WORKSPACE/artifacts/RandomQuotes.db")) {
+            mkdir "$GITHUB_WORKSPACE/artifacts/RandomQuotes.db"
+        }
+        
+        # Check if the "RandomQuotes.ui" directory exists, and create it if it doesn't.
+        if (!(Test-Path "$GITHUB_WORKSPACE/artifacts/RandomQuotes.ui")) {
+            mkdir "$GITHUB_WORKSPACE/artifacts/RandomQuotes.ui"
+        }
     - name: Publish RandomQuotesDatabase
       run: dotnet publish ./src/RandomQuotes.DbUp/RandomQuotes.DbUp.csproj --configuration Release --no-restore --output "$GITHUB_WORKSPACE/artifacts/RandomQuotes.db"
     - name: Publish RandomQuotesUI
@@ -40,7 +51,7 @@ jobs:
 
       with:
         version: latest
-
+      
     - name: Debug Package Paths
       run: |
         echo "Checking package paths:"
