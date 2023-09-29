@@ -69,7 +69,7 @@ jobs:
       with:
         api_key: ${{ secrets.OCTOPUSSERVERAPIKEY }}
         server: ${{ secrets.OCTOPUSSERVERURL }}
-        packages: "artifacts/RandomQuotes.db.$PACKAGE_VERSION.zip,artifacts/RandomQuotes.ui.$PACKAGE_VERSION.zip"
+        packages: "artifacts/RandomQuotes.db.${{ env.PACKAGE_VERSION }}.zip,artifacts/RandomQuotes.ui.${{ env.PACKAGE_VERSION }}.zip"
         space: ${{ secrets.OCTOPUSSERVER_SPACE }}
         
     # - name: Create and deploy release
