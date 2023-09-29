@@ -23,6 +23,7 @@ jobs:
       working-directory: ./src
       run: dotnet restore
     - name: Build
+      working-directory: ./src
       run: dotnet build --configuration Release --no-restore
     - name: Create artifacts folder
       run: |
@@ -30,9 +31,9 @@ jobs:
         mkdir "$GITHUB_WORKSPACE/artifacts/RandomQuotes.db"
         mkdir "$GITHUB_WORKSPACE/artifacts/RandomQuotes.ui"
     - name: Publish RandomQuotesDatabase
-      run: dotnet publish RandomQuotes.DbUp/RandomQuotes.DbUp.csproj --configuration Release --no-restore --output "$GITHUB_WORKSPACE/artifacts/RandomQuotes.db"
+      run: dotnet publish ./src/RandomQuotes.DbUp/RandomQuotes.DbUp.csproj --configuration Release --no-restore --output "$GITHUB_WORKSPACE/artifacts/RandomQuotes.db"
     - name: Publish RandomQuotesUI
-      run: dotnet publish RandomQuotes/RandomQuotes.csproj --configuration Release --no-restore --output "$GITHUB_WORKSPACE/artifacts/RandomQuotes.ui"
+      run: dotnet publish ./src/RandomQuotes/RandomQuotes.csproj --configuration Release --no-restore --output "$GITHUB_WORKSPACE/artifacts/RandomQuotes.ui"
     
     - name: Install Octopus CLI
       uses: OctopusDeploy/install-octopus-cli-action@v1
