@@ -20,10 +20,8 @@ jobs:
       with:
         dotnet-version: 6.0.x
     - name: Install dependencies
-      working-directory: ./src
       run: dotnet restore
     - name: Build
-      working-directory: ./src
       run: dotnet build --configuration Release --no-restore
     - name: Create artifacts folder
       run: |
@@ -31,9 +29,9 @@ jobs:
         mkdir "$GITHUB_WORKSPACE/artifacts/RandomQuotes.db"
         mkdir "$GITHUB_WORKSPACE/artifacts/RandomQuotes.ui"
     - name: Publish RandomQuotesDatabase
-      run: dotnet publish ./src/RandomQuotes.DbUp/RandomQuotes.DbUp.csproj --configuration Release --no-restore --output "$GITHUB_WORKSPACE/artifacts/RandomQuotes.db"
+      run: dotnet publish RandomQuotes.DbUp/RandomQuotes.DbUp.csproj --configuration Release --no-restore --output "$GITHUB_WORKSPACE/artifacts/RandomQuotes.db"
     - name: Publish RandomQuotesUI
-      run: dotnet publish ./src/RandomQuotes/RandomQuotes.csproj --configuration Release --no-restore --output "$GITHUB_WORKSPACE/artifacts/RandomQuotes.ui"
+      run: dotnet publish RandomQuotes/RandomQuotes.csproj --configuration Release --no-restore --output "$GITHUB_WORKSPACE/artifacts/RandomQuotes.ui"
     
     - name: Install Octopus CLI
       uses: OctopusDeploy/install-octopus-cli-action@v1
@@ -53,7 +51,7 @@ jobs:
       with:
         api_key: ${{ secrets.OCTOPUSSERVERAPIKEY }}
         server: ${{ secrets.OCTOPUSSERVERURL }}
-        packages: "artifacts/RandomQuotes.db.${{ env.PACKAGE_VERSION }}.zip,artifacts/RandomQuotes.ui.${{ env.PACKAGE_VERSION }}.zip,artifacts"
+        packages: "artifacts/RandomQuotes.db.${{ env.PACKAGE_VERSION }}.zip,artifacts/RandomQuotes.ui.${{ env.PACKAGE_VERSION }}.zip"
         space: ${{ secrets.OCTOPUSSERVER_SPACE }}
         
     # - name: Create and deploy release
