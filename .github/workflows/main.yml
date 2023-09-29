@@ -15,7 +15,7 @@ jobs:
     - uses: actions/checkout@v2
     - name: Set Version
       run: |
-        $packageVersion = Get-Date -Format "yyyy.MM.dd"
+        $packageVersion = Get-Date -Format "yyyy.MM.dd.HHmmss"
         $packageVersion += "." + $env:GITHUB_RUN_NUMBER
         echo "PACKAGE_VERSION=$packageVersion" >> $env:GITHUB_ENV
         echo "PACKAGE_VERSION=$packageVersion" # This is just for debugging
