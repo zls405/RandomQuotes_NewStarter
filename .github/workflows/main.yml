@@ -19,6 +19,7 @@ jobs:
         $packageVersion += "." + $env:GITHUB_RUN_NUMBER
         echo "PACKAGE_VERSION=$packageVersion" >> $GITHUB_ENV
         echo "PACKAGE_VERSION=$packageVersion" # This is just for debugging
+        echo "PACKAGE_VERSION: ${{ env.PACKAGE_VERSION }}"
 
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
