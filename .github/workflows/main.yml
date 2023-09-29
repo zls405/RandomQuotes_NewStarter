@@ -60,10 +60,10 @@ jobs:
     
     - name: Package RandomQuotesDatabase
       run: |
-        octo pack --id="RandomQuotes.db" --format="Zip" --version="$PACKAGE_VERSION" --basePath="$env:GITHUB_WORKSPACE\artifacts" --outFolder="$env:GITHUB_WORKSPACE\artifacts"
+        octo pack --id="RandomQuotes.db" --format="Zip" --version="${{ env.PACKAGE_VERSION }}" --basePath="$env:GITHUB_WORKSPACE\artifacts" --outFolder="$env:GITHUB_WORKSPACE\artifacts"
     - name: Package RandomQuotesUI
       run: |
-        octo pack --id="RandomQuotes.ui" --format="Zip" --version="$PACKAGE_VERSION" --basePath="$env:GITHUB_WORKSPACE\artifacts" --outFolder="$env:GITHUB_WORKSPACE\artifacts"
+        octo pack --id="RandomQuotes.ui" --format="Zip" --version="${{ env.PACKAGE_VERSION }}" --basePath="$env:GITHUB_WORKSPACE\artifacts" --outFolder="$env:GITHUB_WORKSPACE\artifacts"
     
     - name: Push RandomQuotes packages
       uses: OctopusDeploy/push-package-action@v1
