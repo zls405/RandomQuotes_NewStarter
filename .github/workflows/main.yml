@@ -40,6 +40,16 @@ jobs:
 
       with:
         version: latest
+
+    - name: Debug Package Paths
+      run: |
+        echo "Checking package paths:"
+        ls "$GITHUB_WORKSPACE/artifacts"
+        ls "$GITHUB_WORKSPACE/artifacts/RandomQuotes.db"
+        ls "$GITHUB_WORKSPACE/artifacts/RandomQuotes.ui"
+        echo "PACKAGE_VERSION: $PACKAGE_VERSION"
+        echo "Checking octo tool path:"
+        ls "C:\Users\zach\Code\RandomQuotes_NewStarter\actions-runner\_work\_tool\octo\9.1.7\arm64\octo.exe"
     
     - name: Package RandomQuotesDatabase
       run: |
