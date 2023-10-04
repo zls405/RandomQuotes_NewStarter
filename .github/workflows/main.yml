@@ -73,12 +73,12 @@ jobs:
         packages: "artifacts/RandomQuotes.db.${{ env.PACKAGE_VERSION }}.zip,artifacts/RandomQuotes.ui.${{ env.PACKAGE_VERSION }}.zip"
         space: ${{ secrets.OCTOPUSSERVER_SPACE }}
         
-    # - name: Create and deploy release
-    #   uses: OctopusDeploy/create-release-action@v1
-    #   with:
-    #     api_key: ${{ secrets.OCTOPUSSERVERAPIKEY }}
-    #     server: ${{ secrets.OCTOPUSSERVERURL }}
-    #     space: ${{ secrets.OCTOPUSSERVER_SPACE }}
-    #     project: "Random Quotes Demo"
-    #     deploy_to: "Development"
-    #     progress: true
+    - name: Create and deploy release
+      uses: OctopusDeploy/create-release-action@v1
+      with:
+        api_key: ${{ secrets.OCTOPUSSERVERAPIKEY }}
+        server: ${{ secrets.OCTOPUSSERVERURL }}
+        space: ${{ secrets.OCTOPUSSERVER_SPACE }}
+        project: "Random Quotes"
+        deploy_to: "Development"
+        progress: true
