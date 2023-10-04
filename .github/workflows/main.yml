@@ -1,0 +1,84 @@
+name: RandomQuotes Build
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+
+    runs-on: self-hosted
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set Version
+      run: |
+        $packageVersion = Get-Date -Format "yyyy.MM.dd.HHmmss"
+        # $packageVersion += "." + $env:GITHUB_RUN_NUMBER
+        echo "PACKAGE_VERSION=$packageVersion" >> $env:GITHUB_ENV
+        echo "PACKAGE_VERSION=$packageVersion" # This is just for debugging
+        echo "PACKAGE_VERSION: ${{ env.PACKAGE_VERSION }}"
+
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 6.0.x
+    - name: Install dependencies
+      working-directory: .\src\
+      run: dotnet restore
+    - name: Build
+      working-directory: .\src\
+      run: dotnet build --configuration Release --no-restore
+    - name: Create artifacts folder
+      run: |
+        # Check if the "artifacts" directory exists, and create it if it doesn't.
+        if (!(Test-Path "$env:GITHUB_WORKSPACE\artifacts")) {
+            mkdir "$env:GITHUB_WORKSPACE\artifacts"
+        }
+        
+        # Check if the "RandomQuotes.db" directory exists, and create it if it doesn't.
+        if (!(Test-Path "$env:GITHUB_WORKSPACE\artifacts\RandomQuotes.db")) {
+            mkdir "$env:GITHUB_WORKSPACE\artifacts\RandomQuotes.db"
+        }
+        
+        # Check if the "RandomQuotes.ui" directory exists, and create it if it doesn't.
+        if (!(Test-Path "$env:GITHUB_WORKSPACE\artifacts\RandomQuotes.ui")) {
+            mkdir "$env:GITHUB_WORKSPACE\artifacts\RandomQuotes.ui"
+        }
+    - name: Publish RandomQuotesDatabase
+      run: dotnet publish .\src\RandomQuotes.DbUp\RandomQuotes.DbUp.csproj --configuration Release --no-restore --output "$env:GITHUB_WORKSPACE\artifacts\RandomQuotes.db"
+    - name: Publish RandomQuotesUI
+      run: dotnet publish .\src\RandomQuotes\RandomQuotes.csproj --configuration Release --no-restore --output "$env:GITHUB_WORKSPACE\artifacts\RandomQuotes.ui"
+    
+    - name: Install Octopus CLI
+      uses: OctopusDeploy/install-octopus-cli-action@v1
+
+      with:
+        version: latest
+    
+    - name: Package RandomQuotesDatabase
+      run: |
+        octo pack --id="RandomQuotes.db" --format="Zip" --version="${{ env.PACKAGE_VERSION }}" --basePath="$env:GITHUB_WORKSPACE\artifacts" --outFolder="$env:GITHUB_WORKSPACE\artifacts"
+    - name: Package RandomQuotesUI
+      run: |
+        octo pack --id="RandomQuotes.ui" --format="Zip" --version="${{ env.PACKAGE_VERSION }}" --basePath="$env:GITHUB_WORKSPACE\artifacts" --outFolder="$env:GITHUB_WORKSPACE\artifacts"
+    
+    - name: Push RandomQuotes packages
+      uses: OctopusDeploy/push-package-action@v1
+      with:
+        api_key: ${{ secrets.OCTOPUSSERVERAPIKEY }}
+        server: ${{ secrets.OCTOPUSSERVERURL }}
+        packages: "artifacts/RandomQuotes.db.${{ env.PACKAGE_VERSION }}.zip,artifacts/RandomQuotes.ui.${{ env.PACKAGE_VERSION }}.zip"
+        space: ${{ secrets.OCTOPUSSERVER_SPACE }}
+        
+    - name: Create and deploy release
+      uses: OctopusDeploy/create-release-action@v1
+      with:
+        api_key: ${{ secrets.OCTOPUSSERVERAPIKEY }}
+        server: ${{ secrets.OCTOPUSSERVERURL }}
+        space: ${{ secrets.OCTOPUSSERVER_SPACE }}
+        project: "Random Quotes"
+        deploy_to: "Development"
+        progress: true
